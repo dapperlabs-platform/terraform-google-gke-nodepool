@@ -102,12 +102,6 @@ variable "node_labels" {
   default     = {}
 }
 
-variable "node_taints" {
-  description = "Kubernetes taints applied to nodes. E.g. type=blue:NoSchedule"
-  type        = list(string)
-  default     = []
-}
-
 variable "node_local_ssd_count" {
   description = "Number of local SSDs attached to nodes."
   type        = number
