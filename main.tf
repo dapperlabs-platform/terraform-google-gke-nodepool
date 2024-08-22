@@ -142,4 +142,9 @@ resource "google_container_node_pool" "nodepool" {
       max_unavailable = config.value.max_unavailable
     }
   }
+  lifecycle {
+    ignore_changes = [
+      initial_node_count
+    ]
+  }
 }
