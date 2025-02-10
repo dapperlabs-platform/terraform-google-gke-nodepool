@@ -204,3 +204,18 @@ variable "workload_metadata_config" {
   type        = string
   default     = "GKE_METADATA"
 }
+
+variable "resource_labels" {
+  description = "GCP labels (key-value pairs) to be applied to all resources created in the node pool."
+  type        = map(string)
+  default     = {}
+}
+
+variable "kubelet_config" {
+  description = "Kubelet configuration for the node pool."
+  type = object({
+    cpu_cfs_quota = bool
+    pod_pids_limit = number
+  })
+  default = null
+}

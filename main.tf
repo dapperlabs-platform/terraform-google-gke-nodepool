@@ -75,6 +75,11 @@ resource "google_container_node_pool" "nodepool" {
     service_account   = local.service_account_email
     tags              = var.node_tags
     boot_disk_kms_key = var.node_boot_disk_kms_key
+    resource_labels   = var.resource_labels
+    kubelet_config {
+      cpu_cfs_quota = var.kubelet_config.cpu_cfs_quota
+      pod_pids_limit = var.kubelet_config.pod_pids_limit
+    }
 
     dynamic "guest_accelerator" {
       for_each = var.node_guest_accelerator
