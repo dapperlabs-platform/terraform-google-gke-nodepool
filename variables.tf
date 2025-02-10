@@ -217,13 +217,14 @@ variable "enable_kubelet_config" {
   default     = "none"
 }
 
-variable "kubelet_config" {
-  description = "Kubelet configuration for the node pool."
+variable "cpu_cfs_quota" {
+  description = "Enable cpu cfs quota for the node pool."
+  type        = bool
+  default     = false
+}
 
-  type = object({
-    cpu_manager_policy = string
-    cpu_cfs_quota = bool
-    pod_pids_limit = number
-  })
-  default = null
+variable "pod_pids_limit" {
+  description = "Enable pod pids limit for the node pool."
+  type        = number
+  default     = 0
 }
