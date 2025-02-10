@@ -78,8 +78,8 @@ resource "google_container_node_pool" "nodepool" {
     resource_labels   = var.resource_labels
     kubelet_config {
       cpu_manager_policy = var.enable_kubelet_config
-      cpu_cfs_quota = var.kubelet_config.cpu_cfs_quota
-      pod_pids_limit = var.kubelet_config.pod_pids_limit
+      cpu_cfs_quota = var.cpu_cfs_quota
+      pod_pids_limit = var.pod_pids_limit
     }
 
     dynamic "guest_accelerator" {
