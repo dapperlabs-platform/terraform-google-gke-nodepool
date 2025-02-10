@@ -211,9 +211,17 @@ variable "resource_labels" {
   default     = {}
 }
 
+variable "enable_kubelet_config" {
+  description = "Enable kubelet config for the node pool. String must be 'none' or 'static'."
+  type        = string
+  default     = "none"
+}
+
 variable "kubelet_config" {
   description = "Kubelet configuration for the node pool."
+
   type = object({
+    cpu_manager_policy = string
     cpu_cfs_quota = bool
     pod_pids_limit = number
   })
