@@ -220,9 +220,12 @@ variable "enable_kubelet_config" {
 variable "cpu_cfs_quota" {
   description = "Enable cpu cfs quota for the node pool."
   type        = bool
+  default     = true
 }
 
 variable "pod_pids_limit" {
   description = "Enable pod pids limit for the node pool."
   type        = number
+  default     = -1
 }
+
