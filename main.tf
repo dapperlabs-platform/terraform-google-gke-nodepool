@@ -78,7 +78,7 @@ resource "google_container_node_pool" "nodepool" {
     resource_labels   = var.resource_labels
 
     dynamic "kubelet_config" {
-      for_each = var.enable_kubelet_config == "static" ? [1] : []
+      for_each = var.enable_kubelet_config == "none" ? [] : [1]
       content {
         cpu_manager_policy = "static"
         cpu_cfs_quota     = var.cpu_cfs_quota
