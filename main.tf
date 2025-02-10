@@ -77,9 +77,10 @@ resource "google_container_node_pool" "nodepool" {
     boot_disk_kms_key = var.node_boot_disk_kms_key
     resource_labels   = var.resource_labels
     kubelet_config {
-      cpu_manager_policy = var.enable_kubelet_config
+      cpu_manager_policy = var.enable_kubelet_config == "none" ? "none" : "static"
       cpu_cfs_quota = var.cpu_cfs_quota
       pod_pids_limit = var.pod_pids_limit
+
     }
 
     dynamic "guest_accelerator" {
