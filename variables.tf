@@ -204,3 +204,13 @@ variable "workload_metadata_config" {
   type        = string
   default     = "GKE_METADATA"
 }
+
+variable "kubelet_config" {
+  type = object({
+    cpu_manager_policy   = optional(string)
+    cpu_cfs_quota        = optional(bool)
+    cpu_cfs_quota_period = optional(string)
+    pod_pids_limit       = optional(number)
+  })
+  default = {}
+}
