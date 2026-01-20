@@ -173,6 +173,16 @@ variable "node_tags" {
   default     = null
 }
 
+variable "node_taints" {
+  description = "Kubernetes taints applied to nodes. Prevents workloads from scheduling unless they have matching tolerations."
+  type = list(object({
+    key    = string
+    value  = string
+    effect = string
+  }))
+  default = []
+}
+
 variable "node_count" {
   description = "Number of nodes per instance group, can be updated after creation. Ignored when autoscaling is set."
   type        = number

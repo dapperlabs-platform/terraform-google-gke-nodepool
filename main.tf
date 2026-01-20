@@ -76,6 +76,15 @@ resource "google_container_node_pool" "nodepool" {
     tags              = var.node_tags
     boot_disk_kms_key = var.node_boot_disk_kms_key
 
+    dynamic "taint" {
+      for_each = var.node_taints
+      content {
+        key    = taint.value.key
+        value  = taint.value.value
+        effect = taint.value.effect
+      }
+    }
+
     dynamic "guest_accelerator" {
       for_each = var.node_guest_accelerator
       iterator = config
