@@ -84,18 +84,6 @@ variable "node_disk_type" {
   default     = "pd-standard"
 }
 
-variable "node_guest_accelerator" {
-  description = "List of GPU accelerator configurations. Each entry specifies type, count, and driver installation settings."
-  type = list(object({
-    type  = string
-    count = number
-    gpu_driver_installation_config = optional(object({
-      gpu_driver_version = string
-    }))
-  }))
-  default = []
-}
-
 variable "node_image_type" {
   description = "Nodes image type."
   type        = string
