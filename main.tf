@@ -87,10 +87,16 @@ resource "google_container_node_pool" "nodepool" {
 
     dynamic "guest_accelerator" {
       for_each = var.node_guest_accelerator
-      iterator = config
       content {
-        type  = config.key
-        count = config.value
+        type  = guest_accelerator.value.type
+        count = guest_accelerator.value.count
+
+        dynamic "gpu_driver_installation_config" {
+          for_each = guest_accelerator.value.gpu_driver_installation_config != null ? [guest_accelerator.value.gpu_driver_installation_config] : []
+          content {
+            gpu_driver_version = gpu_driver_installation_config.value.gpu_driver_version
+          }
+        }
       }
     }
 
