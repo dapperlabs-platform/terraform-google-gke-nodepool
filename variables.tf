@@ -84,6 +84,12 @@ variable "node_disk_type" {
   default     = "pd-standard"
 }
 
+variable "node_guest_accelerator" {
+  description = "Map of type and count of attached accelerator cards."
+  type        = map(number)
+  default     = {}
+}
+
 variable "node_image_type" {
   description = "Nodes image type."
   type        = string
