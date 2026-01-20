@@ -34,6 +34,82 @@ module "cluster-1-nodepool-1" {
 # tftest:modules=1:resources=2
 ```
 
+### GPU nodepool with accelerator-optimized machine types
+
+For GPU workloads using accelerator-optimized machine types (g2, a2, a3), the GPU is built into the machine type. Use node taints to prevent non-GPU workloads from scheduling on these expensive nodes.
+
+```hcl
+module "cluster-1-gpu-nodepool" {
+  source           = "github.com/dapperlabs-platform/terraform-google-gke-nodepool?ref=tag"
+  project_id       = "myproject"
+  cluster_name     = "cluster-1"
+  location         = "us-west1-a"
+  name             = "gpu-nodepool"
+  node_machine_type = "g2-standard-8"  # Includes NVIDIA L4 GPU
+
+  autoscaling_config = {
+    min_node_count = 0
+    max_node_count = 4
+  }
+
+  node_taints = [
+    {
+      key    = "nvidia.com/gpu"
+      value  = "present"
+      effect = "NoSchedule"
+    }
+  ]
+
+  node_labels = {
+    "cloud.google.com/gke-accelerator" = "nvidia-l4"
+    "workload-type"                    = "gpu"
+  }
+}
+```
+
+### GPU nodepool with attached accelerators
+
+For GPU workloads using general-purpose machine types (n1, n2) with attached GPUs, specify the GPU configuration including driver installation.
+
+```hcl
+module "cluster-1-gpu-nodepool" {
+  source            = "github.com/dapperlabs-platform/terraform-google-gke-nodepool?ref=tag"
+  project_id        = "myproject"
+  cluster_name      = "cluster-1"
+  location          = "us-west1-c"
+  name              = "gpu-nodepool"
+  node_machine_type = "n1-standard-4"
+
+  autoscaling_config = {
+    min_node_count = 0
+    max_node_count = 4
+  }
+
+  node_guest_accelerator = [
+    {
+      type  = "nvidia-tesla-t4"
+      count = 1
+      gpu_driver_installation_config = {
+        gpu_driver_version = "DEFAULT"  # GKE manages driver installation
+      }
+    }
+  ]
+
+  node_taints = [
+    {
+      key    = "nvidia.com/gpu"
+      value  = "present"
+      effect = "NoSchedule"
+    }
+  ]
+
+  node_labels = {
+    "cloud.google.com/gke-accelerator" = "nvidia-tesla-t4"
+    "workload-type"                    = "gpu"
+  }
+}
+```
+
 <!-- BEGIN TFDOC -->
 ## Variables
 
@@ -52,7 +128,7 @@ module "cluster-1-nodepool-1" {
 | *node_count* | Number of nodes per instance group, can be updated after creation. Ignored when autoscaling is set. | <code title="">number</code> |  | <code title="">null</code> |
 | *node_disk_size* | Node disk size, defaults to 100GB. | <code title="">number</code> |  | <code title="">100</code> |
 | *node_disk_type* | Node disk type, defaults to pd-standard. | <code title="">string</code> |  | <code title="">pd-standard</code> |
-| *node_guest_accelerator* | Map of type and count of attached accelerator cards. | <code title="map&#40;number&#41;">map(number)</code> |  | <code title="">{}</code> |
+| *node_guest_accelerator* | List of GPU accelerator configurations. Each entry specifies type, count, and driver installation settings. | <code title="list&#40;object&#40;&#123;type &#61; string, count &#61; number, gpu_driver_installation_config &#61; optional&#40;object&#40;&#123;gpu_driver_version &#61; string&#125;&#41;&#41;&#125;&#41;&#41;">list(object)</code> |  | <code title="">[]</code> |
 | *node_image_type* | Nodes image type. | <code title="">string</code> |  | <code title="">null</code> |
 | *node_labels* | Kubernetes labels attached to nodes. | <code title="map&#40;string&#41;">map(string)</code> |  | <code title="">{}</code> |
 | *node_local_ssd_count* | Number of local SSDs attached to nodes. | <code title="">number</code> |  | <code title="">0</code> |
@@ -67,7 +143,7 @@ module "cluster-1-nodepool-1" {
 | *node_service_account_scopes* | Scopes applied to service account. Default to: 'cloud-platform' when creating a service account; 'devstorage.read_only', 'logging.write', 'monitoring.write' otherwise. | <code title="list&#40;string&#41;">list(string)</code> |  | <code title="">[]</code> |
 | *node_shielded_instance_config* | Shielded instance options. | <code title="object&#40;&#123;&#10;enable_secure_boot          &#61; bool&#10;enable_integrity_monitoring &#61; bool&#10;&#125;&#41;">object({...})</code> |  | <code title="">null</code> |
 | *node_tags* | Network tags applied to nodes. | <code title="list&#40;string&#41;">list(string)</code> |  | <code title="">null</code> |
-| *node_taints* | Kubernetes taints applied to nodes. E.g. type=blue:NoSchedule | <code title="list&#40;string&#41;">list(string)</code> |  | <code title="">[]</code> |
+| *node_taints* | Kubernetes taints applied to nodes. Prevents workloads from scheduling unless they have matching tolerations. | <code title="list&#40;object&#40;&#123;key &#61; string, value &#61; string, effect &#61; string&#125;&#41;&#41;">list(object)</code> |  | <code title="">[]</code> |
 | *upgrade_config* | Optional node upgrade configuration. | <code title="object&#40;&#123;&#10;max_surge       &#61; number&#10;max_unavailable &#61; number&#10;&#125;&#41;">object({...})</code> |  | <code title="">null</code> |
 | *workload_metadata_config* | Metadata configuration to expose to workloads on the node pool. | <code title="">string</code> |  | <code title="">GKE_METADATA_SERVER</code> |
 
