@@ -85,6 +85,15 @@ resource "google_container_node_pool" "nodepool" {
       }
     }
 
+    dynamic "taint" {
+      for_each = var.node_taints
+      content {
+        key    = taint.value.key
+        value  = taint.value.value
+        effect = taint.value.effect
+      }
+    }
+
     dynamic "sandbox_config" {
       for_each = (
         var.node_sandbox_config != null
