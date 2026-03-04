@@ -167,6 +167,16 @@ variable "node_shielded_instance_config" {
   default = null
 }
 
+variable "node_taints" {
+  description = "Kubernetes taints applied to nodes."
+  type = list(object({
+    key    = string
+    value  = string
+    effect = string
+  }))
+  default = []
+}
+
 variable "node_tags" {
   description = "Network tags applied to nodes."
   type        = list(string)
